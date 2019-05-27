@@ -46,4 +46,4 @@ v.what.vect map=postcodes_distance@NCR column=nuts2 query_map=NUTS2@PERMANENT qu
 v.what.vect map=postcodes_distance@NCR column=nuts3 query_map=NUTS3@PERMANENT query_column=nuts318cd
 
 # Write to gpkg
-v.out.ogr -s input=postcodes output=pc_2_stjames format=gpkg output_layer=pc_2_station
+v.out.ogr -s input=postcodes_distance output=pc_to_resilience format=GPKG output_layer=postcodes
