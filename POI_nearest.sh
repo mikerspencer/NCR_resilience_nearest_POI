@@ -14,7 +14,7 @@ db.dropcolumn -f table=postcodes_distance column=str_6
 db.dropcolumn -f table=postcodes_distance column=str_7
 
 # Get boundary lookups
-v.db.addcolumn map=postcodes_distance@NCR columns="ag_parish VARCHAR(30),local_authority VARCHAR(30),datazone VARCHAR(30),output_area VARCHAR(30),nuts2 VARCHAR(30),nuts3 VARCHAR(30)"
+v.db.addcolumn map=postcodes_distance@NCR columns="ag_parish VARCHAR(35),local_authority VARCHAR(30),datazone VARCHAR(30),output_area VARCHAR(30),nuts2 VARCHAR(30),nuts3 VARCHAR(30)"
 v.what.vect map=postcodes_distance@NCR column=ag_parish query_map=Ag_parishes@PERMANENT query_column=PARName
 v.what.vect map=postcodes_distance@NCR column=local_authority query_map=Local_authorities@PERMANENT query_column=CODE
 v.what.vect map=postcodes_distance@NCR column=datazone query_map=DataZone_2011@PERMANENT query_column=DataZone
