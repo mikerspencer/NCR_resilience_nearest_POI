@@ -50,4 +50,5 @@ v.db.renamecolumn map=postcodes_distance@NCR column=str_1,POI_name
 db.dropcolumn -f table=postcodes_distance column=tcat
 
 # Write to gpkg
-v.out.ogr -s input=postcodes_distance output=pc_to_resilience.gpkg format=GPKG output_layer=postcodes
+v.out.ogr -s input=postcodes_distance output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=postcodes
+v.out.ogr -a input=DataZone_2011@PERMANENT output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011
