@@ -25,7 +25,7 @@ v.what.vect map=postcodes_distance@NCR column=nuts3 query_map=NUTS3@PERMANENT qu
 g.copy --overwrite vector=postcodes_geography,postcodes_distance
 
 # Read POI
-v.in.ascii input=/home/mspencer/Downloads/community_centre_poi.csv output=POI_community_centre separator=comma skip=1 x=4 y=5
+# v.in.ascii input=/home/mspencer/Downloads/community_centre_poi.csv output=POI_community_centre separator=comma skip=1 x=4 y=5
 
 # PC to nearest POI
 v.net input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=400 arc_layer=1 node_layer=2
