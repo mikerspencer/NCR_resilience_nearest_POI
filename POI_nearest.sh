@@ -27,6 +27,12 @@ v.db.renamecolumn map=postcodes_distance@NCR column=int_1,POI_ref
 v.db.renamecolumn map=postcodes_distance@NCR column=str_1,POI_name
 db.dropcolumn -f table=postcodes_distance column=tcat
 
+# Join postcodes to Hebridies routes
+v.extract --overwrite input=Local_authorities@PERMANENT output=Hebridies
+v.select ainput=pc_to_POI_ComCen_Hebridies@NCR binput=Hebridies output=pc_to_POI_ComCen_Hebridies operator=overlap
+v.db.join map=pc_to_POI_ComCen_Hebridies column=cat other_table=postcodes_distance other_column=cat subset_columns=postcode,POI_ref,datazone
+
+
 # Write to gpkg
 v.out.ogr -s input=postcodes_distance output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=postcodes
 v.out.ogr -a input=DataZone_2011@PERMANENT output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011
