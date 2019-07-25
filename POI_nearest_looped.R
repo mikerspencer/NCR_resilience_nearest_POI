@@ -7,27 +7,33 @@
 
 library(rgrass7)
 library(RSQLite)
+library(readr)
 
 # Postcodes to road network
 system("g.copy --overwrite vector=postcodes_geography,postcodes_distance")
 system("v.net input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=400 arc_layer=1 node_layer=2")
 
 # Read POI
-# v.in.ascii input=/home/mspencer/Downloads/community_centre_poi.csv output=POI_community_centre separator=comma skip=1 x=4 y=5
+# system("v.in.ascii input=/home/mspencer/Downloads/resilience_points_df.csv output=POIs separator=comma skip=1 x=3 y=4")
 
-ids = unique()
+ids = unique(read.csv("~/Downloads/resilience_points_df.csv", stringsAsFactors=F)$description)
 
 lapply(ids, function(i){
+   
+   execGRASS("v.extract", flags=c("overwrite"),
+             parameters = list(input="POIs",
+                               where=paste0("str_3 = '", i, "'"),
+                               output="points"))
    
    # connect POI to streets as layer 3
    execGRASS("v.net", flags=c("overwrite"),
              parameters=list(input="roads_net1",
-                             points=i,
-                             output=roads_net2,
+                             points="points",
+                             output="roads_net2",
                              operation="connect",
-                             thresh=400,
-                             arc_layer=1,
-                             node_layer=3))
+                             threshold=400,
+                             arc_layer="1",
+                             node_layer="3"))
    
    # shortest paths
    system("v.net.distance --overwrite in=roads_net2 out=pc_to_POI flayer=2 to_layer=3")
@@ -41,12 +47,14 @@ lapply(ids, function(i){
    system("v.db.update map=postcodes_temp column=dist_km qcol='dist/1000'")
    
    # Join to POI data
-   v.db.join map=postcodes_temp column=tcat other_table=POI other_column=cat subset_columns=int_1,str_1
+   system("v.db.join map=postcodes_temp column=tcat other_table=points other_column=cat subset_columns=int_1,str_1")
    system("v.db.renamecolumn map=postcodes_temp@NCR column=int_1,POI_ref")
    system("v.db.renamecolumn map=postcodes_temp@NCR column=str_1,POI_name")
    system("db.dropcolumn -f table=postcodes_temp column=tcat")
    
    # Write to csv
+   x = which(ids == i)
+   system(paste0("v.out.ogr -s input=points@NCR output=/home/mspencer/Downloads/points_", x, ".csv format=CSV"))
 })
 
 # Read csvs and write to GPKG attribute table
