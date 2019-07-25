@@ -11,12 +11,12 @@ library(readr)
 
 # Postcodes to road network
 system("g.copy --overwrite vector=postcodes_geography,postcodes_distance")
-system("v.net input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=400 arc_layer=1 node_layer=2")
+system("v.net --overwrite input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=400 arc_layer=1 node_layer=2")
 
 # Read POI
 # system("v.in.ascii input=/home/mspencer/Downloads/resilience_points_df.csv output=POIs separator=comma skip=1 x=3 y=4")
 
-ids = unique(read.csv("~/Downloads/resilience_points_df.csv", stringsAsFactors=F)$description)
+ids = unique(read.csv("~/Downloads/resilience_POI.csv", stringsAsFactors = F)$description)
 
 lapply(ids, function(i){
    
@@ -54,7 +54,12 @@ lapply(ids, function(i){
    
    # Write to csv
    x = which(ids == i)
-   system(paste0("v.out.ogr -s input=points@NCR output=/home/mspencer/Downloads/points_", x, ".csv format=CSV"))
+   system(paste0("v.out.ogr -s input=postcodes_temp output=/home/mspencer/Downloads/points_", x, ".csv format=CSV"))
 })
 
 # Read csvs and write to GPKG attribute table
+f = list.files("~/Downloads", pattern = "^points_*", full.names = T)
+
+x = lapply(f, function(i){
+   read_csv(i)
+})
