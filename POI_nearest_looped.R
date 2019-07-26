@@ -7,7 +7,7 @@
 
 library(rgrass7)
 library(RSQLite)
-library(readr)
+library(tidyverse)
 
 # Postcodes to road network
 system("g.copy --overwrite vector=postcodes_geography,postcodes_distance")
@@ -51,6 +51,8 @@ lapply(ids, function(i){
    system("v.db.renamecolumn map=postcodes_temp@NCR column=int_1,POI_ref")
    system("v.db.renamecolumn map=postcodes_temp@NCR column=str_1,POI_name")
    system("db.dropcolumn -f table=postcodes_temp column=tcat")
+   system("v.db.addcolumn map=postcodes_temp columns='POI_type VARCHAR(50)'")
+   system(paste0("v.db.update map=postcodes_temp column=dist_km qcol='", i, "'"))
    
    # Write to csv
    x = which(ids == i)
@@ -60,6 +62,7 @@ lapply(ids, function(i){
 # Read csvs and write to GPKG attribute table
 f = list.files("~/Downloads", pattern = "^points_*", full.names = T)
 
-x = lapply(f, function(i){
-   read_csv(i)
+x = lapply(seq_along(f), function(i){
+   read_csv(f[i]) %>% 
+      add_column(POI_type = ids[i])
 })
