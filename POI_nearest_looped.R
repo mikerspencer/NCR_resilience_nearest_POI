@@ -82,7 +82,8 @@ dbSendQuery(conn=db,
             PRIMARY KEY (postcode, POI_type))")
 
 lapply(f, function(i){
-   y = read_csv(i)
+   y = read_csv(i) %>% 
+      drop_na(POI_type)
    dbWriteTable(db, name="postcode_to_POI", y, append=T, row.names=F)
 })
 
