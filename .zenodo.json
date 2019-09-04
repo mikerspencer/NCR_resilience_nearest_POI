@@ -1,0 +1,28 @@
+{
+    "description": "<p>Code to create database of nearest resilience infrastructure from each Scottish postcode, commissioned by the National Centre for Resilience.</p>\n\n<p>Written in R and GRASS.</p>", 
+    "license": "GPL-3.0", 
+    "title": "Identifying Hot Spots in Rural Community Resilience in Scotland - data generation code", 
+    "keywords": [
+        "R", 
+        "Spatial", 
+        "GRASS", 
+        "Resilience", 
+        "Postcodes", 
+        "Emergency", 
+        "Scotland"
+    ], 
+    "upload_type": "software", 
+    "communities": [
+        {
+            "identifier": "sruc-lees"
+        }
+    ], 
+    "creators": [
+        {
+            "orcid": "0000-0003-1472-2082", 
+            "affiliation": "SRUC", 
+            "name": "Michael Spencer"
+        }
+    ], 
+    "access_right": "open"
+}
