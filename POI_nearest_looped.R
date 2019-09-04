@@ -78,7 +78,6 @@ dbSendQuery(conn=db,
             dist REAL,
             dist_km REAL,
             POI_ref INTEGER,
-            POI_name TEXT,
             POI_type TEXT,
             resilience_type TEXT,
             PRIMARY KEY (postcode, POI_type))")
