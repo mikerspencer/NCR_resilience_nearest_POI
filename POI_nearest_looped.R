@@ -11,18 +11,18 @@ library(tidyverse)
 
 # Postcodes to road network
 system("g.copy --overwrite vector=postcodes_geography,postcodes_distance")
-system("v.net --overwrite input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=400 arc_layer=1 node_layer=2")
+system("v.net --overwrite input=OpenRoads points=postcodes_distance output=roads_net1 operation=connect thresh=500 arc_layer=1 node_layer=2")
 
 # Read POI
-# system("v.in.ascii --overwrite input=/home/mspencer/Downloads/resilience_POI.csv output=POIs separator=comma skip=1 x=3 y=4") 
+# system("v.in.ascii --overwrite input=/home/mspencer/Downloads/resilience_indicators.csv output=POIs separator=comma skip=1 x=3 y=4") 
 
-ids = unique(read_csv("~/Downloads/resilience_POI.csv")$description)
+ids = unique(read_csv("~/Downloads/resilience_indicators.csv")$description)
 
 lapply(ids, function(i){
    
    execGRASS("v.extract", flags=c("overwrite"),
              parameters = list(input="POIs",
-                               where=paste0("str_5 = '", i, "'"),
+                               where=paste0("str_3 = '", i, "'"),
                                output="points"))
    
    # connect POI to streets as layer 3
@@ -31,7 +31,7 @@ lapply(ids, function(i){
                              points="points",
                              output="roads_net2",
                              operation="connect",
-                             threshold=400,
+                             threshold=500,
                              arc_layer="1",
                              node_layer="3"))
    
@@ -47,9 +47,9 @@ lapply(ids, function(i){
    system("v.db.update map=postcodes_temp column=dist_km qcol='dist/1000'")
    
    # Join to POI data
-   system("v.db.join map=postcodes_temp column=tcat other_table=points other_column=cat subset_columns=int_1,str_5")
+   system("v.db.join map=postcodes_temp column=tcat other_table=points other_column=cat subset_columns=int_1,str_3")
    system("v.db.renamecolumn map=postcodes_temp@NCR column=int_1,POI_ref")
-   system("v.db.renamecolumn map=postcodes_temp@NCR column=str_5,POI_type")
+   system("v.db.renamecolumn map=postcodes_temp@NCR column=str_3,POI_type")
    system("db.dropcolumn -f table=postcodes_temp column=tcat")
    
    # Write to csv
@@ -58,10 +58,11 @@ lapply(ids, function(i){
 })
 
 # Write to gpkg
-system("v.out.ogr -a input=DataZone_2011@PERMANENT output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011")
+system("v.out.ogr -a -s input=DataZone_2011@PERMANENT output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011")
 
 # Read csvs and write to GPKG attribute table
 f = list.files("~/Downloads", pattern = "^points_*", full.names = T)
+res_types = read_csv("Downloads/resilience_codes.csv")
 
 db = dbConnect(SQLite(), dbname="~/Downloads/pc_to_resilience.gpkg")
 
@@ -79,11 +80,12 @@ dbSendQuery(conn=db,
             POI_ref INTEGER,
             POI_name TEXT,
             POI_type TEXT,
+            resilience_type TEXT,
             PRIMARY KEY (postcode, POI_type))")
 
 lapply(f, function(i){
    y = read_csv(i) %>% 
-      drop_na(POI_type)
+      left_join(res_types, by=c(POI_type = "description"))
    dbWriteTable(db, name="postcode_to_POI", y, append=T, row.names=F)
 })
 
