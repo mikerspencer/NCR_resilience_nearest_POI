@@ -58,7 +58,7 @@ lapply(ids, function(i){
 })
 
 # Write to gpkg
-system("v.out.ogr -a -s input=DataZone_2011@PERMANENT output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011")
+system("v.out.ogr -a -s input=DataZone_2011_clean_smooth output=/home/mspencer/Downloads/pc_to_resilience.gpkg format=GPKG output_layer=DataZone_2011")
 
 # Read csvs and write to GPKG attribute table
 f = list.files("~/Downloads", pattern = "^points_*", full.names = T)
@@ -77,13 +77,13 @@ dbSendQuery(conn=db,
             nuts3 TEXT,
             dist REAL,
             dist_km REAL,
-            POI_ref INTEGER,
             POI_type TEXT,
             resilience_type TEXT,
             PRIMARY KEY (postcode, POI_type))")
 
 lapply(f, function(i){
    y = read_csv(i) %>% 
+      select(-POI_ref) %>% 
       left_join(res_types, by=c(POI_type = "description"))
    dbWriteTable(db, name="postcode_to_POI", y, append=T, row.names=F)
 })
