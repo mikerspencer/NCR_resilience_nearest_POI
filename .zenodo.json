@@ -1,5 +1,13 @@
 {
     "description": "<p>Code to create database of nearest resilience infrastructure from each Scottish postcode, commissioned by the National Centre for Resilience.</p>\n\n<p>Written in R and GRASS.</p>", 
+    "contributors": [
+        {
+            "orcid": "0000-0002-2997-6969", 
+            "affiliation": "Scotland's Rural College", 
+            "type": "ProjectLeader", 
+            "name": "Elliot Meador"
+        }
+    ], 
     "license": "GPL-3.0", 
     "title": "Identifying Hot Spots in Rural Community Resilience in Scotland - data generation code", 
     "keywords": [
